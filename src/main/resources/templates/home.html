@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportStore - Trang chủ</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <!-- Insert Navbar Layout Component -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <div class="container">
+
+        <!-- Hero Section exactly as requested -->
+        <section class="hero-banner">
+            <a href="#products" class="hero-btn">Khám phá ngay &rarr;</a>
+            <div class="hero-content">
+                <h2>Bức Phá Giới hạn</h2>
+                <p>Mùa hè rực lửa</p>
+                <h3>Sale 50%</h3>
+            </div>
+        </section>
+
+        <!-- Latest Products Grid -->
+        <section id="products">
+            <div class="section-header">
+                <h2>Sản phẩm mới nhất</h2>
+                <a th:href="@{/products}" class="btn btn-secondary btn-sm" style="margin-top: 5px">Xem quản lý Sản
+                    phẩm</a>
+            </div>
+
+            <div class="product-grid">
+                <div class="product-card" th:each="product : ${products}">
+                    <div class="product-card-img">
+                        <img th:if="${product.image != null}" th:src="@{/images/{image}(image=${product.image})}"
+                            alt="Product Image">
+                        <span th:if="${product.image == null}" style="color: #ccc; font-weight: 500">Chưa có ảnh</span>
+                    </div>
+                    <div class="product-card-body">
+                        <div class="product-card-name" th:text="${product.name}">Tên sản phẩm</div>
+                        <div class="product-card-price"
+                            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">100,000 đ
+                        </div>
+                        <div style="font-size: 13px; color: #888; margin-top: 5px;"
+                            th:text="${product.category != null ? product.category.name : 'Chưa phân loại'}">Danh mục
+                        </div>
+                        <div class="product-card-actions">
+                            <a href="#" class="btn btn-primary" style="width: 100%; justify-content: center">Thêm vào
+                                giỏ</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty state if no data -->
+            <div th:if="${#lists.isEmpty(products)}"
+                style="text-align: center; padding: 50px 0; color: #777; background: #f8f9fa; border-radius: 10px; border: 1px dashed #ccc;">
+                <p>Tạm thời chưa có sản phẩm nào. Truy cập Quản lý sản phẩm để thêm mới.</p>
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- Insert Footer Layout Component -->
+    <div th:replace="~{fragments/layout :: footer}"></div>
+
+</body>
+
+</html>

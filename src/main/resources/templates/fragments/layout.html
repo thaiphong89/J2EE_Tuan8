@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- ========== NAVBAR FRAGMENT ========== -->
+<header th:fragment="navbar" class="header">
+    <div class="container">
+        <!-- Top row: Logo, Search, Icons -->
+        <div class="header-top">
+            <a th:href="@{/}" class="logo">SPORTSTORE</a>
+
+            <div class="search-box">
+                <span class="menu-icon">☰</span>
+                <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm, thương hiệu">
+                <span class="search-icon">🔍</span>
+            </div>
+
+            <div class="header-icons">
+                <a href="#" class="icon-btn" title="Giỏ hàng">
+                    🛒
+                    <span class="cart-badge">2</span>
+                </a>
+                <a href="#" class="icon-btn" title="Yêu thích">♡</a>
+                <a href="#" class="icon-btn" title="Tài khoản">👤</a>
+            </div>
+        </div>
+
+        <!-- Bottom row: Nav Links -->
+        <nav class="header-nav">
+            <a th:href="@{/}" class="nav-link nav-item">Home</a>
+            <a th:href="@{/products}" class="nav-link nav-item">Shop</a>
+            <a href="#" class="nav-link nav-item">Brand</a>
+            <a th:href="@{/categories}" class="nav-link nav-item">Danh mục</a>
+            <a href="#" class="nav-link nav-item promo">Khuyến mãi</a>
+        </nav>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.header-nav .nav-item').forEach(item => {
+                const itemPath = item.getAttribute('href');
+                if (itemPath && itemPath !== '#') {
+                    if ((itemPath === '/' && currentPath === '/') || (itemPath !== '/' && currentPath.startsWith(itemPath))) {
+                        item.classList.add('active');
+                    }
+                }
+            });
+        });
+    </script>
+</header>
+
+<!-- ========== FOOTER FRAGMENT ========== -->
+<footer th:fragment="footer" class="footer">
+    <div class="container">
+        <h2 style="margin: 0; color: #fff; letter-spacing: 1px">SPORTSTORE</h2>
+        <p style="color: #aaa; margin-top: 10px">&copy; 2026 SportStore. Bức phá giới hạn.</p>
+    </div>
+</footer>
+
+</html>

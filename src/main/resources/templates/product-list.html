@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý sản phẩm - SportStore</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .page-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .table-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            background: #f9f9f9;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: #fafafa;
+            border-radius: 15px;
+            border: 2px dashed #e0e0e0;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .badge {
+            background: #eef2f5;
+            color: #4a5568;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <div class="container" style="min-height: 60vh;">
+
+        <div class="page-header-flex">
+            <div>
+                <h1 class="page-title">Quản lý Sản phẩm</h1>
+                <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Hiển thị tổng cộng <span
+                        th:text="${products.size()}"></span> sản phẩm</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <a th:href="@{/categories}" class="btn btn-secondary">Danh mục</a>
+                <a th:href="@{/products/add}" class="btn btn-primary">+ Thêm mới</a>
+            </div>
+        </div>
+
+        <!-- Products Table -->
+        <div class="table-wrapper" th:if="${!products.isEmpty()}">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 50px; text-align: center;">STT</th>
+                        <th style="width: 70px; text-align: center;">Ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Giá bán</th>
+                        <th style="width: 140px; text-align: center;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p, state : ${products}">
+                        <td style="text-align: center; color: #888;" th:text="${state.count}"></td>
+                        <td style="text-align: center;">
+                            <img th:if="${p.image != null && !p.image.isEmpty()}" th:src="@{'/images/' + ${p.image}}"
+                                class="table-image" th:alt="${p.name}">
+                            <div th:unless="${p.image != null && !p.image.isEmpty()}" class="table-image"
+                                style="display: flex; align-items: center; justify-content: center; font-size: 11px; color: #bbb;">
+                                N/A</div>
+                        </td>
+                        <td>
+                            <strong th:text="${p.name}" style="color: #222; font-size: 15px;"></strong>
+                        </td>
+                        <td>
+                            <span th:if="${p.category != null}" class="badge" th:text="${p.category.name}"></span>
+                            <span th:unless="${p.category != null}" style="color: #aaa; font-size: 13px;">—</span>
+                        </td>
+                        <td>
+                            <span style="font-weight: 700; color: #e53935;"
+                                th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                        </td>
+                        <td>
+                            <div class="table-actions" style="justify-content: center;">
+                                <a th:href="@{/products/edit/{id}(id=${p.id})}" class="btn btn-warning btn-sm"
+                                    style="padding: 6px 12px;">Sửa</a>
+                                <a th:href="@{/products/delete/{id}(id=${p.id})}" class="btn btn-danger btn-sm"
+                                    style="padding: 6px 12px;"
+                                    onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">Xóa</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${products.isEmpty()}" class="empty-state">
+            <div style="font-size: 40px; margin-bottom: 15px;">🔍</div>
+            <h3>Kho hàng đang trống</h3>
+            <p style="color: #777; margin-bottom: 25px;">Hãy bắt đầu thêm những sản phẩm đầu tiên lên kệ của bạn.</p>
+            <a th:href="@{/products/add}" class="btn btn-primary" style="padding: 10px 25px; font-size: 16px;">+ Thêm
+                sản phẩm ngay</a>
+        </div>
+
+    </div>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+
+</body>
+
+</html>

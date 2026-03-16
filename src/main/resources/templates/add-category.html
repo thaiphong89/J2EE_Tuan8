@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm danh mục - SportStore</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .form-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px 40px;
+            max-width: 500px;
+            margin: 40px auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+        }
+
+        .form-card h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 22px;
+            text-align: center;
+            color: #333;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .form-actions .btn {
+            flex: 1;
+            justify-content: center;
+            padding: 12px;
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <div class="container" style="min-height: 60vh;">
+
+        <div class="form-card">
+            <h2>Thêm Danh mục mới</h2>
+
+            <form th:action="@{/categories/add}" th:object="${category}" method="post">
+                <div class="form-group">
+                    <label style="color: #555">Tên danh mục <span style="color: red">*</span></label>
+                    <input type="text" th:field="*{name}" class="form-control" placeholder="VD: Quần áo thể thao..."
+                        required>
+                </div>
+
+                <div class="form-actions">
+                    <a th:href="@{/categories}" class="btn btn-secondary">
+                        Hủy bỏ
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        Thêm mới
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+
+</body>
+
+</html>

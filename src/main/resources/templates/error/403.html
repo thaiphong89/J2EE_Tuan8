@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Từ chối truy cập - SportStore</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .error-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .error-title {
+            font-size: 36px;
+            color: #e74c3c;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .error-message {
+            font-size: 18px;
+            color: #555;
+            max-width: 500px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <div class="container error-container">
+        <div class="error-icon">🚫</div>
+        <h1 class="error-title">Truy Cập Bị Từ Chối (Lỗi 403)</h1>
+        <p class="error-message">Xin lỗi, bạn chỉ là tài khoản người dùng bình thường nên không có quyền hạn truy cập hoặc chỉnh sửa chức năng này. Tính năng quản lý Sản phẩm và Danh mục chỉ dành cho tài khoản Admin cấp cao nhất.</p>
+        <div style="display: flex; gap: 15px;">
+            <a href="javascript:history.back()" class="btn btn-secondary" style="padding: 10px 25px;">⬅ Quay lại trang trước</a>
+            <a th:href="@{/}" class="btn btn-primary" style="padding: 10px 25px;">Về Trang chủ chính</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+
+</html>

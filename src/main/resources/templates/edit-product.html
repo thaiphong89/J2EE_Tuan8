@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sửa sản phẩm - ShopPro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+    <div class="bg-particles"></div>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <div class="page">
+        <div class="section-container">
+            <div class="page-header">
+                <h1>✏️ Sửa sản phẩm</h1>
+                <p>Cập nhật thông tin sản phẩm bên dưới</p>
+            </div>
+
+            <div class="form-card animate-scaleIn">
+                <div class="form-card-header warning">
+                    <h2>📦 Chỉnh sửa sản phẩm</h2>
+                </div>
+                <div class="form-card-body">
+                    <form th:action="@{/products/edit/{id}(id=${product.id})}" th:object="${product}" method="post"
+                        enctype="multipart/form-data">
+
+                        <div class="form-group">
+                            <label>Tên sản phẩm *</label>
+                            <input type="text" th:field="*{name}" class="form-control"
+                                th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
+                                placeholder="Nhập tên sản phẩm...">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Giá bán (VNĐ) *</label>
+                            <input type="number" th:field="*{price}" class="form-control"
+                                th:classappend="${#fields.hasErrors('price')} ? 'is-invalid'"
+                                placeholder="Nhập giá sản phẩm...">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Danh mục *</label>
+                            <select th:field="*{category.id}" class="form-select"
+                                th:classappend="${#fields.hasErrors('category')} ? 'is-invalid'">
+                                <option value="">-- Chọn danh mục --</option>
+                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"
+                                    th:selected="${product.category != null and product.category.id == cat.id}">
+                                </option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('category')}"
+                                th:errors="*{category}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Hình ảnh sản phẩm</label>
+                            <input type="file" name="imageFile" class="form-control" accept="image/*">
+                            <span th:if="${product.image != null && !product.image.isEmpty()}" class="form-hint"
+                                th:text="'📎 Ảnh hiện tại: ' + ${product.image}"></span>
+                            <span th:unless="${product.image != null && !product.image.isEmpty()}"
+                                class="form-hint">Chưa có ảnh. Chọn ảnh mới để tải lên.</span>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-warning btn-block btn-lg">
+                                💾 Cập nhật sản phẩm
+                            </button>
+                            <a th:href="@{/products}" class="btn btn-secondary btn-block">
+                                ← Quay lại danh sách
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+
+    <script>
+        window.addEventListener('scroll', function () {
+            const navbar = document.getElementById('mainNavbar');
+            navbar.classList.toggle('scrolled', window.scrollY > 50);
+        });
+    </script>
+</body>
+
+</html>

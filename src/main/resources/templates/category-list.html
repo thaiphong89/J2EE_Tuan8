@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý danh mục - SportStore</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .page-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: #fafafa;
+            border-radius: 15px;
+            border: 2px dashed #e0e0e0;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <div class="container" style="min-height: 60vh;">
+
+        <div class="page-header-flex">
+            <div>
+                <h1 class="page-title">Quản lý Danh mục</h1>
+                <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Hiển thị tổng cộng <span
+                        th:text="${categories.size()}"></span> danh mục sản phẩm</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <a th:href="@{/products}" class="btn btn-secondary">Quản lý Sản phẩm</a>
+                <a th:href="@{/categories/add}" class="btn btn-primary">+ Thêm mới</a>
+            </div>
+        </div>
+
+        <!-- Categories Table -->
+        <div class="table-wrapper" th:if="${!categories.isEmpty()}">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 80px; text-align: center;">STT</th>
+                        <th>Tên danh mục</th>
+                        <th style="width: 160px; text-align: center;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="category, state : ${categories}">
+                        <td style="text-align: center; color: #888; font-weight: 500;" th:text="${state.count}"></td>
+                        <td>
+                            <strong th:text="${category.name}" style="color: #222; font-size: 16px;"></strong>
+                        </td>
+                        <td>
+                            <div class="table-actions" style="justify-content: center;">
+                                <a th:href="@{/categories/edit/{id}(id=${category.id})}" class="btn btn-warning btn-sm"
+                                    style="padding: 6px 15px;">Sửa</a>
+                                <a th:href="@{/categories/delete/{id}(id=${category.id})}" class="btn btn-danger btn-sm"
+                                    style="padding: 6px 15px;"
+                                    onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này? Việc này có thể ảnh hưởng đến các sản phẩm bên trong.')">Xóa</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${categories.isEmpty()}" class="empty-state">
+            <div style="font-size: 40px; margin-bottom: 15px;">📁</div>
+            <h3>Chưa có danh mục nào</h3>
+            <p style="color: #777; margin-bottom: 25px;">Hãy bắt đầu thêm mới các phân loại cho cửa hàng.</p>
+            <a th:href="@{/categories/add}" class="btn btn-primary" style="padding: 10px 25px; font-size: 16px;">+ Thêm
+                danh mục ngay</a>
+        </div>
+
+    </div>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+
+</body>
+
+</html>
