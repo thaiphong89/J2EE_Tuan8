@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng - SportStore</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .page-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .cart-summary {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 30px;
+            text-align: right;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: #fafafa;
+            border-radius: 15px;
+            border: 2px dashed #e0e0e0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <div class="container" style="min-height: 60vh;">
+
+        <div class="page-header-flex">
+            <div>
+                <h1 class="page-title">Giỏ hàng của bạn</h1>
+                <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Quản lý và thanh toán các sản phẩm đã chọn</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <a th:href="@{/products}" class="btn btn-secondary">Tiếp tục mua hàng</a>
+                <a th:if="${!cartItems.isEmpty()}" th:href="@{/cart/clear}" class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa toàn bộ sản phẩm trong giỏ hàng?')">Xóa tất cả</a>
+            </div>
+        </div>
+
+        <!-- Products Table -->
+        <div class="table-wrapper" th:if="${!cartItems.isEmpty()}" style="margin-top: 20px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 60px; text-align: center;">STT</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Đơn giá</th>
+                        <th style="width: 120px; text-align: center;">Số lượng</th>
+                        <th>Thành tiền</th>
+                        <th style="width: 120px; text-align: center;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item, state : ${cartItems}">
+                        <td style="text-align: center; color: #888;" th:text="${state.count}"></td>
+                        <td>
+                            <strong th:text="${item.name}" style="color: #333; font-size: 16px;"></strong>
+                        </td>
+                        <td>
+                            <span style="color: #666; font-weight: 500;" th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span style="font-weight: bold; background: #eef2f5; padding: 4px 12px; border-radius: 15px; color: #222;" th:text="${item.quantity}"></span>
+                        </td>
+                        <td>
+                            <span style="font-weight: 800; color: #e53935;" th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                        </td>
+                        <td style="text-align: center;">
+                            <a th:href="@{/cart/remove/{id}(id=${item.productId})}" class="btn btn-danger btn-sm" style="padding: 6px 15px; border-radius: 4px;" onclick="return confirm('Bạn có muốn bỏ sản phẩm này khỏi giỏ hàng?')">Xóa</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="cart-summary">
+                <h3 style="margin: 0 0 15px 0; color: #333;">Tổng cộng: <strong style="color: #e53935; font-size: 32px;" th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></strong></h3>
+                <a th:href="@{/checkout}" class="btn btn-success" style="padding: 12px 35px; font-size: 16px; font-weight: bold; border-radius: 6px; box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2); display: inline-block; text-decoration: none;">💳 Thanh toán ngay</a>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${cartItems.isEmpty()}" class="empty-state">
+            <div style="font-size: 55px; margin-bottom: 20px;">🛒</div>
+            <h3 style="color: #444;">Giỏ hàng của bạn đang trống</h3>
+            <p style="color: #888; margin-bottom: 25px; line-height: 1.6;">Dường như bạn chưa thêm bất kỳ sản phẩm nào vào giỏ hàng.<br>Hãy lướt xem các danh mục và chọn cho mình những món đồ ưng ý nhé!</p>
+            <a th:href="@{/products}" class="btn btn-primary" style="padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 6px;">Tiếp tục khám phá</a>
+        </div>
+
+    </div>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+
+</body>
+
+</html>

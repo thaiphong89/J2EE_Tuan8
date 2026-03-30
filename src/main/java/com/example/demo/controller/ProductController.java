@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -28,8 +29,43 @@ public class ProductController {
     private final String uploadDir = System.getProperty("user.dir") + "/uploads/";
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("products", productService.getAll());
+    public String list(@RequestParam(value = "keyword", required = false) String keyword,
+                       @RequestParam(value = "categoryId", required = false) Long categoryId,
+                       @RequestParam(value = "page", defaultValue = "1") int page,
+                       @RequestParam(value = "sort", required = false) String sort,
+                       Model model) {
+        
+        int pageSize = 5;
+        Page<Product> productPage;
+        
+        String sortBy = "id";
+        String sortDir = "asc";
+
+        if (sort != null && !sort.isEmpty()) {
+            if (sort.equals("price_asc")) {
+                sortBy = "price";
+                sortDir = "asc";
+            } else if (sort.equals("price_desc")) {
+                sortBy = "price";
+                sortDir = "desc";
+            }
+            model.addAttribute("sort", sort);
+        }
+
+        productPage = productService.searchProduct(keyword, categoryId, page - 1, pageSize, sortBy, sortDir);
+        
+        if (keyword != null && !keyword.isEmpty()) {
+            model.addAttribute("keyword", keyword);
+        }
+        if (categoryId != null) {
+            model.addAttribute("categoryId", categoryId);
+        }
+        
+        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("totalItems", productPage.getTotalElements());
         return "product-list";
     }
 

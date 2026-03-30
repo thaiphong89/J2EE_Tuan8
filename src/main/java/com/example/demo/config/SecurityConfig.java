@@ -31,9 +31,9 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/register").permitAll()
                 .requestMatchers("/css/**", "/images/**", "/js/**").permitAll()
-                .requestMatchers("/categories").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/categories", "/categories/").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/categories/**").hasRole("ADMIN")
-                .requestMatchers("/products").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/products", "/products/").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/products/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
         )

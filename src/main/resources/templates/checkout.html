@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán - SportStore</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .page-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .page-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0;
+        }
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 30px;
+        }
+        .checkout-form, .checkout-summary {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 22px;
+            font-weight: bold;
+            color: #e53935;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <div class="container" style="min-height: 60vh;">
+        <div class="page-header-flex">
+            <div>
+                <h1 class="page-title">Tiến hành Thanh toán</h1>
+                <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Vui lòng điền thông tin giao hàng của bạn</p>
+            </div>
+            <a th:href="@{/cart}" class="btn btn-secondary">Quay lại Giỏ hàng</a>
+        </div>
+
+        <div class="checkout-grid">
+            <div class="checkout-form">
+                <h3 style="margin-top: 0; margin-bottom: 20px; color: #333;">Thông tin giao hàng</h3>
+                <form th:action="@{/checkout}" method="post">
+                    <div class="form-group">
+                        <label for="customerName">Họ và tên người nhận (*)</label>
+                        <input type="text" id="customerName" name="customerName" class="form-control" placeholder="Nhập họ và tên..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Số điện thoại (*)</label>
+                        <input type="text" id="customerPhone" name="customerPhone" class="form-control" placeholder="Nhập số điện thoại liện hệ..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerAddress">Địa chỉ nhận hàng (*)</label>
+                        <textarea id="customerAddress" name="customerAddress" class="form-control" rows="3" placeholder="Nhập địa chỉ nhà, tên đường, phường, quận..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 18px; font-weight: bold; margin-top: 10px;">Xác Nhận Đặt Hàng</button>
+                </form>
+            </div>
+
+            <div class="checkout-summary">
+                <h3 style="margin-top: 0; margin-bottom: 20px; color: #333;">Tóm tắt đơn hàng</h3>
+                
+                <div th:each="item : ${cartItems}" class="summary-item">
+                    <div>
+                        <strong th:text="${item.name}"></strong><br>
+                        <small style="color: #777;">Số lượng: <span th:text="${item.quantity}"></span></small>
+                    </div>
+                    <div style="font-weight: 600;" th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></div>
+                </div>
+                
+                <div class="summary-total">
+                    <span>Tổng cộng:</span>
+                    <span th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

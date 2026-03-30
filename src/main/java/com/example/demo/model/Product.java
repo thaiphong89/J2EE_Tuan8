@@ -17,7 +17,7 @@ public class Product {
     private String name;
 
     @NotNull(message = "Giá sản phẩm không được để trống")
-    @Range(min = 1, max = 9999999, message = "Giá sản phẩm phải từ 1 đến 9,999,999")
+    @Range(min = 1, max = 1000000000, message = "Giá sản phẩm phải từ 1 đến 1,000,000,000")
     private Double price;
 
     @Size(max = 200, message = "Tên hình ảnh không quá 200 kí tự")

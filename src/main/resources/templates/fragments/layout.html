@@ -15,9 +15,9 @@
             </div>
 
             <div class="header-icons">
-                <a href="#" class="icon-btn" title="Giỏ hàng">
+                <a th:href="@{/cart}" class="icon-btn" title="Giỏ hàng">
                     🛒
-                    <span class="cart-badge">2</span>
+                    <span class="cart-badge" th:if="${cartCount != null && cartCount > 0}" th:text="${cartCount}"></span>
                 </a>
                 <a href="#" class="icon-btn" title="Yêu thích">♡</a>
                 <a href="#" class="icon-btn" title="Tài khoản">👤</a>

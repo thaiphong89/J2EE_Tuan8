@@ -24,7 +24,15 @@ public class AccountService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Could not find user"));
 
         Set<SimpleGrantedAuthority> authorities = account.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .map(role -> {
+                    String roleName = role.getName().trim().toUpperCase();
+                    if (roleName.equals("1")) roleName = "ROLE_ADMIN";
+                    if (roleName.equals("2")) roleName = "ROLE_USER";
+                    if (!roleName.startsWith("ROLE_")) {
+                        roleName = "ROLE_" + roleName;
+                    }
+                    return new SimpleGrantedAuthority(roleName);
+                })
                 .collect(Collectors.toSet());
 
         return new org.springframework.security.core.userdetails.User(

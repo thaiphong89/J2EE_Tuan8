@@ -65,16 +65,41 @@
     <div th:replace="~{fragments/layout :: navbar}"></div>
 
     <div class="container" style="min-height: 60vh;">
+        <!-- Thêm thông báo giỏ hàng thành công -->
+        <div th:if="${message}" style="background-color: #d4edda; color: #155724; padding: 12px 20px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #c3e6cb; margin-top: 15px;">
+            <span th:text="${message}"></span>
+            <button type="button" style="float: right; border: none; background: transparent; cursor: pointer; color: #155724; font-weight: bold; font-size: 16px;" onclick="this.parentElement.style.display='none'">×</button>
+        </div>
 
         <div class="page-header-flex">
             <div>
                 <h1 class="page-title">Quản lý Sản phẩm</h1>
                 <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Hiển thị tổng cộng <span
-                        th:text="${products.size()}"></span> sản phẩm</p>
+                        th:text="${totalItems}"></span> sản phẩm</p>
             </div>
             <div style="display: flex; gap: 10px;">
+                <!-- Search Form -->
+                <form th:action="@{/products}" method="get" style="display: flex; gap: 8px; margin-right: 15px;">
+                    <input type="text" name="keyword" th:value="${keyword}" class="form-control" placeholder="Tìm kiếm sản phẩm..." style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; width: 250px;">
+                    
+                    <select name="categoryId" class="form-control" style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; max-width: 180px;">
+                        <option value="">Tất cả danh mục</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}" th:selected="${categoryId == cat.id}"></option>
+                    </select>
+
+                    <select name="sort" class="form-control" style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px;">
+                        <option value="">Sắp xếp mặc định</option>
+                        <option value="price_asc" th:selected="${sort == 'price_asc'}">Giá tăng dần</option>
+                        <option value="price_desc" th:selected="${sort == 'price_desc'}">Giá giảm dần</option>
+                    </select>
+
+                    <button type="submit" class="btn btn-secondary" style="padding: 8px 15px;">Lọc & Tìm</button>
+                    <!-- Clear Search Button (shows only when searching or sorting is active) -->
+                    <a th:if="${(keyword != null && !keyword.isEmpty()) || (sort != null && !sort.isEmpty()) || categoryId != null}" th:href="@{/products}" class="btn btn-light" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; color: #555; text-decoration: none;">❌</a>
+                </form>
+
                 <a th:href="@{/categories}" class="btn btn-secondary">Danh mục</a>
-                <a th:href="@{/products/add}" class="btn btn-primary">+ Thêm mới</a>
+                <a th:href="@{/products/add}" class="btn btn-primary" sec:authorize="hasRole('ADMIN')">+ Thêm mới</a>
             </div>
         </div>
 
@@ -114,16 +139,42 @@
                         </td>
                         <td>
                             <div class="table-actions" style="justify-content: center;">
-                                <a th:href="@{/products/edit/{id}(id=${p.id})}" class="btn btn-warning btn-sm"
-                                    style="padding: 6px 12px;">Sửa</a>
-                                <a th:href="@{/products/delete/{id}(id=${p.id})}" class="btn btn-danger btn-sm"
-                                    style="padding: 6px 12px;"
-                                    onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">Xóa</a>
+                                <th:block sec:authorize="hasRole('ADMIN')">
+                                    <a th:href="@{/products/edit/{id}(id=${p.id})}" class="btn btn-warning btn-sm"
+                                        style="padding: 6px 12px;">Sửa</a>
+                                    <a th:href="@{/products/delete/{id}(id=${p.id})}" class="btn btn-danger btn-sm"
+                                        style="padding: 6px 12px;"
+                                        onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">Xóa</a>
+                                </th:block>
+                                <th:block sec:authorize="!hasRole('ADMIN')">
+                                    <a th:href="@{/cart/add/{id}(id=${p.id})}" class="btn btn-success btn-sm"
+                                        style="padding: 6px 12px; background-color: #28a745; border-color: #28a745; color: white;">Thêm vào giỏ</a>
+                                </th:block>
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+        
+        <!-- Pagination controls -->
+        <div th:if="${totalPages > 1}" style="display: flex; justify-content: center; margin-top: 20px;">
+            <ul style="display: flex; list-style: none; padding: 0; gap: 8px;">
+                <li th:classappend="${currentPage == 1} ? 'disabled' : ''">
+                    <a th:href="@{/products(keyword=${keyword}, categoryId=${categoryId}, sort=${sort}, page=${currentPage - 1})}" 
+                       th:style="${currentPage == 1 ? 'pointer-events: none; opacity: 0.5; padding: 6px 12px; background: #fff; border: 1px solid #ddd; color: #333; text-decoration: none; border-radius: 4px;' : 'padding: 6px 12px; background: #fff; border: 1px solid #ddd; color: #333; text-decoration: none; border-radius: 4px;'}">&laquo; Trước</a>
+                </li>
+                
+                <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                    <a th:href="@{/products(keyword=${keyword}, categoryId=${categoryId}, sort=${sort}, page=${i})}" th:text="${i}"
+                       th:style="${currentPage == i ? 'padding: 6px 12px; background: #007bff; border: 1px solid #007bff; color: #fff; text-decoration: none; border-radius: 4px;' : 'padding: 6px 12px; background: #fff; border: 1px solid #ddd; color: #333; text-decoration: none; border-radius: 4px;'}"></a>
+                </li>
+                
+                <li th:classappend="${currentPage == totalPages} ? 'disabled' : ''">
+                    <a th:href="@{/products(keyword=${keyword}, categoryId=${categoryId}, sort=${sort}, page=${currentPage + 1})}" 
+                       th:style="${currentPage == totalPages ? 'pointer-events: none; opacity: 0.5; padding: 6px 12px; background: #fff; border: 1px solid #ddd; color: #333; text-decoration: none; border-radius: 4px;' : 'padding: 6px 12px; background: #fff; border: 1px solid #ddd; color: #333; text-decoration: none; border-radius: 4px;'}">Sau &raquo;</a>
+                </li>
+            </ul>
         </div>
 
         <!-- Empty State -->
